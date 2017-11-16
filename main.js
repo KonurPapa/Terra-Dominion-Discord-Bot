@@ -2,6 +2,7 @@
  * Terra Dominion Discord Bot
  * by KonurPapa
  * 
+ * Some code used from the Open-Source Tucker Discord bot.
  * 
  * This is a very in-depth description about what the bot does that I haven't written yet. Pretend you're very interested after reading this.
  * 
@@ -13,9 +14,9 @@ requirements: {
     var Discord = require("discord.js");
     var fs = require("fs");
     var request = require("request");
-    var youtubedl = require('youtube-dl');
     var ffmpeg = require('fluent-ffmpeg');
     var kanix = require('./kanix.js');
+    var version = "1.0";
 }
 
 function contentHas(_message, regex) {
@@ -42,15 +43,23 @@ try {
         if (!killed) {
             switch (message.content) {
                 case "-info" + endsub(5):
-                    Client.reply(message, "**Terra Dominion Bot**\n\nCreated by @KonurPapa#8843\nRunning _version " + ver + "_\nNew Updates: N/A\n\nFor more information on how to use this bot, use the -help command.");
+                    Client.reply(message, "**Terra Dominion Bot**\n\nCreated by @KonurPapa#8843\nRunning _version " + version + "_\nNew Updates: N/A\n\nFor more information on how to use this bot, use the -help command.");
                     break;
                 case "-promote" + endsub("-promote".length):
                     var rights = message.server.roles.get("name", "Right to Rule");
                     if (rights) {
                         if (Client.userHasRole(message.author, rights)) {
-                            Client.removeUserFromRole(message.author, rights);
-                        } else {
-                            Client.addUserToRole(message.author, rights);
+                            // Give permissions to another person
+                            //Client.addUserToRole(message.author, rights);
+                        }
+                    }
+                    break;
+                case "-demote" + endsub("-demote".length):
+                    var rights = message.server.roles.get("name", "Right to Rule");
+                    if (rights) {
+                        if (Client.userHasRole(message.author, rights)) {
+                            // Revoke permissions from another person
+                            //Client.removeUserFromRole(message.author, rights);
                         }
                     }
                     break;
@@ -78,7 +87,7 @@ try {
                             }
                         }
                         if (!foundResult) {
-                            send(message, "A command with that name could not be found. Perhaps you you made a typo or the command no longer exists.");
+                            send(message, "A command with that name could not be found. Perhaps you mistyped it or the command no longer exists.");
                         }
                     }
                     break;
@@ -90,15 +99,15 @@ try {
                         lq = lq.substr(lf, lq.length);
                         var role = message.server.roles.get("name", lq);
                         if (!role) {
-                            send(message, "This role could not be found.");
+                            send(message, "That role could not be found.");
                             break;
                         } else {
                             var users = message.server.usersWithRole(role);
                             for (var i = 0; i < users.length; i++) {
                                 users[i] = "**" + users[i].username + "**#" + users[i].discriminator;
                             }
-                            var _users = "**__Here are the users with this role:__**\n";
-                            for (i = 0; i < users.length; i++) { //idc if this is bad code
+                            var _users = "**Users with that role:**\n\n";
+                            for (i = 0; i < users.length; i++) {
                                 if (users.length === 1) {
                                     _users += users[i] + ".";
                                 } else if (i === users.length - 1) {
@@ -120,25 +129,25 @@ try {
                         if (Client.userHasRole(message.author, Administrator)) {
                             process.exit();
                         } else {
-                            send(message, "I'm afraid you don't have the right permissions to use this command.");
+                            send(message, "You don't have permission to use that command.");
                         }
                     }
                     break;
                 case "!google" + endsub(7):
                     var myWebRequest = WebRequest.Create(www.google.com);
                     var myWebResponse = myWebRequest.GetResponse();
-                    send(message, "Answer: " + myWebResponse);
+                    send(message, "" + myWebResponse);
                     break;
             }
         }
         Client.stopTyping(message.channel);
     });
-    Client.on("serverNewMember", (server, user) => { //is there a reason to use the arrow other than the function?
+    Client.on("serverNewMember", (server, user) => {
         var general = server.channels.get("name", "general");
-        send(general, "Hullo there, " + user + ". Welcome to Terra Dominion.");
+        send(general, "Hello there, " + user + ". Welcome to Terra Dominion.");
     });
     
-    /* Useful stuff in here about selecting user info. DO NOT DELETE
+    /* Useful stuff in here on selecting user info. DO NOT DELETE
     Client.on("messageDeleted", (message, channel) => {
         if (!message) {
             send("211634505562324992", "Error.");
@@ -150,7 +159,7 @@ try {
     */
     
     Client.setPlayingGame("Terra Dominion");
-    Client.loginWithToken("redacted");
+    Client.loginWithToken("undefined"); // Nobody needs to know this
 } catch (error) {
     console.log(error);
 }
